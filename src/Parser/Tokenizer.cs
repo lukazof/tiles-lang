@@ -27,25 +27,22 @@ public class Tokenizer
                     buf += (char)Consume();
                 }
 
-                Console.WriteLine(buf);
-
                 if(buf == "exit")
                 {
                     tokens.Add(new Token(TokenType.Exit));
                     buf = "";
-                    continue;
                 }
 
                 else if (buf == "var")
                 {
                     tokens.Add(new Token(TokenType.Var));
                     buf = "";
-                    continue;
                 }
 
                 else 
                 {
-                    Console.WriteLine($"error: {buf}");
+                    tokens.Add(new Token(TokenType.Ident, buf));
+                    buf = "";
                 }
             }
 
