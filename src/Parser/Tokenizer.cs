@@ -49,11 +49,11 @@ public class Tokenizer
                 }
             }
 
-            else if(Utils.IsDigit(Peek()))
+            else if(char.IsDigit((char)Peek()))
             {
                 buf += Consume();
 
-                while(Peek() != null && Utils.IsDigit(Peek()))
+                while(Peek() != null && char.IsDigit((char)Peek()))
                 {
                     buf += Consume();
                 }
