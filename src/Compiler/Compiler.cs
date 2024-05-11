@@ -46,8 +46,8 @@ public class Compiler
 
     private void GenerateExitProgram(int exitCode = 0) {
 
-        m_output += $"    mov rax, 60";
-        m_output += $"    mov rdi, {exitCode}";
-        m_output += $"    syscall";
+        m_output += $"    mov rax, 60\n";
+        m_output += $"    mov rdi, {exitCode}\n";
+        m_output += $"    syscall\n";
     }
 }
