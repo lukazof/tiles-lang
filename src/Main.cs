@@ -34,7 +34,7 @@ public class Program
                     Build(args[1]);
                     break;
                 case "test":
-                    Console.WriteLine(BuildFromSrc("exit();"));
+                    Console.WriteLine(BuildFromSrc("//teste\n exit(0);"));
                     break;
                 case "help":
                     ShowHelp();

@@ -60,40 +60,46 @@ public class Tokenizer
 
                 tokens.Add(new Token(TokenType.IntLit, buf));
                 buf = "";
-                continue;
             }
 
             else if (Peek() == ';') {
                 Consume();
                 tokens.Add(new Token(TokenType.Semicolon));
-                continue;
             }
 
             else if (Peek() == '(') {
                 Consume();
                 tokens.Add(new Token(TokenType.OpenParen));
-                continue;
             }
 
             else if (Peek() == ')') {
                 Consume();
                 tokens.Add(new Token(TokenType.CloseParen));
-                continue;
             }
 
             else if (Peek() == '=') {
                 Consume();
                 tokens.Add(new Token(TokenType.Equals));
-                continue;
             }
 
             else if(Peek() == ' '){
                 Consume();
-                continue;
+            }
+
+            else if(Peek() == '/' && Peek(1) == '/') {
+                Consume();
+                Consume();
+
+                while(Peek() != '\n') {
+                    Consume();
+                }
+
+                Consume();
             }
 
             else {
-                Console.WriteLine("Unknown identifier");
+                Console.WriteLine($"Unknown symbol: {Peek()}");
+                return null;
             }
             
             #endregion
