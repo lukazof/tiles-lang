@@ -1,4 +1,8 @@
+// NEEDS REFACTORING
+// NEEDS REFACTORING
+// NEEDS REFACTORING
 using System.Collections.Generic;
+using System.Diagnostics;
 
 public class NodeExpr {
 
@@ -20,11 +24,21 @@ public class NodeStatementExit {
     }
 }
 
+public class NodeStatementVar {
+    public Token ident;
+    public NodeExpr expr;
+
+}
+
 public class NodeStatement {
     public object val;
 
     public NodeStatement(NodeStatementExit exit) {
         val = exit;
+    }
+
+    public NodeStatement(NodeStatementVar var) {
+        val = var;
     }
 }
 
@@ -59,39 +73,83 @@ public class Parser {
         return expr;
     }
 
+    private NodeStatementVar ParseStatementVar() {
+
+        NodeStatementVar var = new NodeStatementVar();
+
+        if(Peek().HasValue() && Peek().Type == TokenType.Ident) {
+            var.ident = Consume();
+        }
+        else {
+            Debug.Fail($"Cannot use reserved keyword `{Peek().Type}`");
+            Environment.Exit(1);
+        }
+
+        if(Peek().HasValue() && Peek().Type == TokenType.Equals) {
+            Consume();
+        }
+        else {
+            Debug.Fail($"Expected `=`");
+            Environment.Exit(1);
+        }
+    
+        NodeExpr expr = ParseExpr();
+
+        if(expr != null) {
+            var.expr = expr;
+        } 
+        else {
+            Debug.Fail("Invalid expression");
+            Environment.Exit(1);
+        }
+
+        if(Peek().HasValue() && Peek().Type == TokenType.Semicolon) {
+            Consume();
+        }
+        else {
+            Debug.Fail($"Expected `;`");
+            Environment.Exit(1);
+        }
+
+        return var;
+    }
+
     private NodeStatementExit ParseStatementExit() {
 
         NodeStatementExit exit = null;
 
         if(Peek().HasValue() && Peek().Type == TokenType.OpenParen) {
             Consume();
-
-            NodeExpr expr = ParseExpr();
-
-            if(Peek().HasValue() && Peek().Type == TokenType.CloseParen) {
-                Consume();
-
-                if(Peek().HasValue() && Peek().Type == TokenType.Semicolon) {
-                    Consume();
-                } 
-
-                else {
-                    Console.WriteLine("Expected ;");
-                }
-
-            } 
-            else { 
-                Console.WriteLine("Expected )");
-            }
-
-            if(expr != null ) {
-                exit = new NodeStatementExit(expr);
-            }
-
+        }
+        else {
+            Debug.Fail("Expected (");
+            Environment.Exit(1);
         }
 
+        NodeExpr expr = ParseExpr();
+
+        if(expr != null) {
+            exit = new NodeStatementExit(expr);
+        }
         else {
-            Console.WriteLine("Expected (");
+            Debug.Fail("Invalid expression");
+            Environment.Exit(1);
+        }
+
+        if(Peek().HasValue() && Peek().Type == TokenType.CloseParen) {
+            Consume();
+        }
+        else {
+            Debug.Fail("Expected `)`");
+            Environment.Exit(1);
+        }
+
+        if(Peek().HasValue() && Peek().Type == TokenType.Semicolon) {
+            Consume();
+        } 
+        else {
+            Debug.Fail("Expected `;`");
+            Environment.Exit(1);
         }
 
         return exit;
@@ -111,6 +169,18 @@ public class Parser {
 
                 if(exit != null) {
                     stmt = new NodeStatement(exit);
+                }
+
+            }
+
+            else if(Peek().Type == TokenType.Var) {
+
+                Consume();
+
+                NodeStatementVar var = ParseStatementVar();
+
+                if(var != null) {
+                    stmt = new NodeStatement(var);
                 }
 
             }
@@ -135,6 +205,11 @@ public class Parser {
                 
                 statements.Add(stmt);
 
+            }
+
+            else {
+                Debug.Fail("Invalid statement");
+                Environment.Exit(1);
             }
         }
 

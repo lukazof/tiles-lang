@@ -18,16 +18,21 @@ public class Compiler
 
             if(stmt.val.GetType() == typeof(NodeStatementExit)) {
                 
-                var exitCode = 0;
-
                 NodeStatementExit exit = (NodeStatementExit)stmt.val;
 
-                exitCode = int.Parse(exit.expression.val.ToString());
+                var exitCode = int.Parse(exit.expression.val.ToString());
 
                 GenerateExitProgram(exitCode);
 
                 // we are quitting anyway
                 return m_output;
+            }
+
+            if(stmt.val.GetType() == typeof(NodeStatementVar)) {
+                
+                NodeStatementVar var = (NodeStatementVar)stmt.val;
+
+                // to do
             }
 
         }
